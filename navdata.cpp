@@ -1,6 +1,6 @@
 #include "navdata.h"
 #include "um220.h"
-
+//test
 extern class um220 *beidouData;
 
 NavData::NavData(QWidget *parent) :
