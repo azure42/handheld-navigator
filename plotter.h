@@ -10,13 +10,14 @@ class PlView : public QGraphicsView
     Q_OBJECT
 public:
     explicit PlView(QWidget *parent = 0);
-     QPointF coorCalc(QPoint x);
+     QPointF coorCalc(QPoint nowPos,int viewWidth,int viewHeight);
+     QCursor cursor;
 
+     QGraphicsItem *zero;
+
+     double cseCalc(QPoint nowPos, int viewWidth, int viewHeight);
 protected:
-    QCursor cursor;
     void keyPressEvent(QKeyEvent *event);
-    QGraphicsItem *zero;
-
 signals:
 
 public slots:
@@ -55,10 +56,12 @@ private:
     QString SPDString;
     QString CSEString;
     QGridLayout *mainLayout;
+    const int viewWidth=(QApplication::desktop()->width()-5*10)*5/6.0;
+    const int viewHeight=(QApplication::desktop()->height()-7*10)*6/7.0;
 protected:
   //  void mousePressEvent(QMouseEvent *event);
 
-private slots:
+public slots:
     void showTime();
 
 };
