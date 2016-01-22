@@ -3,7 +3,7 @@
 #include "qcursor.h"
 #include "key.h"
 #define BEISHU 0.1//一像素代表多少海里
-
+//test
 extern class um220 *beidouData;
 extern class readKey *readKeyThread;
 
