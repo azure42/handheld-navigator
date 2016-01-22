@@ -43,17 +43,17 @@ void readKey::run()
                 indexNum = (indexNum+1)%4;
 //                qDebug()<<QString("%1").arg(indexNum);
             }         
-        }break;
-        case 2:
-            QWSServer::sendKeyEvent(-1,Qt::Key_Up);break;
-        case 3:
-            QWSServer->sendKeyEvent(-1,Qt::Key_Down);break;
-        case 4:
-            QWSServer->sendKeyEvent(-1,Qt::Key_Left);break;
-        case 5:
-            QWSServer->sendKeyEvent(-1,Qt::Key_Right);break;
-        case 6://确认键
-            QWSServer->sendKeyEvent(-1,Qt::Key_Space);break;
+        }break;//一下在qt arm下可编译（据说）
+//        case 2:
+//            QWSServer::sendKeyEvent(-1,Qt::Key_Up,Qt::NoModifier, true, false);break;
+//        case 3:
+//            QWSServer::sendKeyEvent(-1,Qt::Key_Down,Qt::NoModifier, true, false);break;
+//        case 4:
+//            QWSServer::sendKeyEvent(-1,Qt::Key_Left,Qt::NoModifier, true, false);break;
+//        case 5:
+//            QWSServer::sendKeyEvent(-1,Qt::Key_Right,Qt::NoModifier, true, false);break;
+//        case 6://确认键
+//            QWSServer::sendKeyEvent(-1,Qt::Key_Space,Qt::NoModifier, true, false);break;
         }
     }}
     exec();

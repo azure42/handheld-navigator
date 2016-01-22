@@ -3,7 +3,7 @@
 #include "qcursor.h"
 #include "key.h"
 #define BEISHU 0.1//一像素代表多少海里
-//test
+
 extern class um220 *beidouData;
 extern class readKey *readKeyThread;
 
@@ -27,13 +27,13 @@ Plotter::Plotter(QWidget *parent) :
 
     QGraphicsItem *zero = new QGraphicsEllipseItem(
                 QRectF(plView->width()/2.0+150,
-                plView->height()/2.0+50,
-                10,10));
+                       plView->height()/2.0+50,
+                       10,10));
     scene->addItem(zero);
 
     //    scene->addEllipse(QRectF(plView->width()/2.0+150,
-//                             plView->height()/2.0+50,
-//                             10,10));//用圆形表示当前位置
+    //                             plView->height()/2.0+50,
+    //                             10,10));//用圆形表示当前位置
 
     //   plView->centerOn(QPoint(plView->width()/2,plView->height()/2));
     plView->centerOn(QPoint(0,0));
@@ -54,7 +54,6 @@ Plotter::Plotter(QWidget *parent) :
         coordinateLabel =new QLabel(tr("longitude\t\tlatitude"));
         coordinateLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         coordinateLabel->setFrameShape (QFrame::Box);
-
         mainLayout = new QGridLayout(this);
         mainLayout->addWidget(settingLabel,0,0);
         mainLayout->addWidget(CSELabel,1,0);
@@ -155,7 +154,7 @@ PlView::PlView(QWidget *parent) :
     setCursor(cursor);
     cursor.setPos(QPoint(500,400));
 }
-
+/*
 void PlView::dirGet(int num)
 {
     switch (num)
@@ -187,7 +186,7 @@ void PlView::dirGet(int num)
     }
     //    QGraphicsView::keyPressEvent(event);
 }
-
+*/
 void PlView::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key())

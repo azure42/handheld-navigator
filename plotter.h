@@ -20,7 +20,7 @@ protected:
 signals:
 
 public slots:
-    void dirGet(int);
+//    void dirGet(int);
 };
 
 class XItem : public QGraphicsItem

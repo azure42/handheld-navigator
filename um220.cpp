@@ -1,4 +1,4 @@
-#include "stable.h"
+i#include "stable.h"
 #include "um220.h"
 
 void um220::um220init()
