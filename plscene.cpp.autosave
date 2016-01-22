@@ -1,0 +1,81 @@
+#include "plscene.h"
+#include "qcursor.h"
+#include "content.h"
+
+PlScene::PlScene(QObject *parent) :
+    QObject(parent)
+{
+}
+
+MyView::MyView(QWidget *parent) :
+    QGraphicsView(parent)
+{
+    QCursor cursor ;
+    cursor = QCursor(Qt::CrossCursor);
+    setCursor(cursor);
+    QObject::connect(content->readKeyThread,SIGNAL(dirKey(int)),
+                     MyView, SLOT(dirGet(int)));//方向键
+}
+
+MyItem::MyItem()
+{
+    brushColor = Qt::red;
+//    setFlag(QGraphicsItem::ItemIsFocusable);
+//    setFlag(QGraphicsItem::ItemIsMovable);
+//    setAcceptHoverEvents(true);
+    
+}
+
+QRectF MyItem::boundingRect() const
+{
+    qreal adjust = 0.5;
+    return QRectF(-10 - adjust, -10 - adjust,
+                  20 + adjust, 20 + adjust);
+}
+
+void MyItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                   QWidget *widget)
+{
+    if(hasFocus()) {
+        painter->setPen(QPen(QColor(255,255,255,200)));
+    } else {
+        painter->setPen(QPen(QColor(100,100,100,100)));
+    }
+    painter->setBrush(brushColor);
+    painter->drawRect(-10, -10, 20, 20);
+}
+
+
+void MyView::dirGet(int num)
+{
+    switch (num)
+    {
+/*视图的缩放和旋转
+ *     case Qt::Key_Equal :
+        scale(1.2, 1.2);
+        break;
+    case Qt::Key_Minus :
+        scale(1 / 1.2, 1 / 1.2);
+        break;
+    case Qt::Key_0 :
+        rotate(30);
+        break;
+*/
+     case 1 ://上
+        cursor.setPos((QPoint(cursor.pos().x(),cursor.pos().y()-10)));
+        break;
+    case 2 ://下
+        cursor.setPos((QPoint(cursor.pos().x(),cursor.pos().y()+10)));
+        break;
+    case 3 ://左
+        cursor.setPos((QPoint(cursor.pos().x()-10,cursor.pos().y())));
+        break;
+    case 4 ://右
+        cursor.setPos((QPoint(cursor.pos().x()+10,cursor.pos().y())));
+        break;
+     case 5://确认键，添加点或删除选中点
+    }
+//    QGraphicsView::keyPressEvent(event);
+}
+
+

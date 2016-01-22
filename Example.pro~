@@ -1,0 +1,36 @@
+#-------------------------------------------------
+#
+# Project created by QtCreator 2013-05-06T11:10:17
+#
+#-------------------------------------------------
+
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+TARGET = Example
+TEMPLATE = app
+
+
+SOURCES += main.cpp\
+        content.cpp \
+    navdata.cpp \
+    plotter.cpp \
+    highway.cpp \
+    steering.cpp \
+    painter.cpp \
+    data.cpp \
+    um220.cpp \
+    posix_qextserialport.cpp \
+    qextserialbase.cpp
+
+HEADERS  += content.h \
+    navdata.h \
+    plotter.h \
+    highway.h \
+    steering.h \
+    painter.h \
+    data.h \
+    um220.h \
+    posix_qextserialport.h \
+    qextserialbase.h
