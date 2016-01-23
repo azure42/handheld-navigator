@@ -9,18 +9,18 @@ class PlView : public QGraphicsView
 {
     Q_OBJECT
 public:
-     explicit PlView(QWidget *parent = 0);
-     QPointF coorCalc(QPoint nowPos,int viewWidth,int viewHeight);
-     QCursor cursor;
-     QGraphicsItem *zero;
-     double cseCalc(QPoint nowPos, int viewWidth, int viewHeight);
+    explicit PlView(QWidget *parent = 0);
+    QPointF coorCalc(QPoint nowPos,int viewWidth,int viewHeight);
+    QCursor cursor;
+    QGraphicsItem *zero;
 protected:
     void keyPressEvent(QKeyEvent *event);
-    QLinkedList <QGraphicsItemGroup*> linkList;
+    QLinkedList <QGraphicsSimpleTextItem*> linkList;
+    double cseCalc(QPoint nowPos, int viewWidth, int viewHeight);
 signals:
 
 public slots:
-//    void dirGet(int);
+    //    void dirGet(int);
 };
 
 class XItem : public QGraphicsItem
@@ -29,8 +29,8 @@ public:
     XItem();
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                  QWidget *widget);
-//    void setColor(const QColor &color) { brushColor = color; }
+               QWidget *widget);
+    //    void setColor(const QColor &color) { brushColor = color; }
 protected:
 private:
 public slots:
@@ -58,22 +58,13 @@ private:
     int viewWidth;
     int viewHeight;
 protected:
-  //  void mousePressEvent(QMouseEvent *event);
+    //  void mousePressEvent(QMouseEvent *event);
 
 public slots:
     void showTime();
 
 };
 
-class PtGroup : public  QObject,public QGraphicsItemGroup
-{
-    Q_OBJECT
-public:
-    PtGroup();
-    QGraphicsItem *rect;
-    QGraphicsItem *text;
-
-};
 
 
 

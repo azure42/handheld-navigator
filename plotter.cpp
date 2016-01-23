@@ -74,7 +74,6 @@ Plotter::Plotter(QWidget *parent) :
     //                              plView->mapToGlobal(QPoint(viewWidth/2,viewHeight/2)).y());
     plView->cursor.setPos(viewWidth/2+10*3+viewWidth/5+1,viewHeight/2+10*2+4);
     scene->addItem(zero);
-    qDebug("%lf,%lf",zero->x(),zero->y());
 
 }
 
@@ -198,45 +197,36 @@ void PlView::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Left :
         if(cursor.pos().x() > PlView::pos().x() )
         {   cursor.setPos((QPoint(cursor.pos().x()-8,cursor.pos().y())));
-            qDebug("Key_Left");
         }break;
     case Qt::Key_Right :
         if(cursor.pos().x() < (PlView::pos().x()+ PlView::width()))
         {   cursor.setPos((QPoint(cursor.pos().x()+8,cursor.pos().y())));
-            qDebug("Key_Right");
         }break;
 
 
-    case Qt::Key_Space ://管理途径点,以16x16的正方形表示
+    case Qt::Key_Space ://管理途径点,以16x16的正方形和数字表示
     {
-        static int i=0;
-        if(scene()->itemAt(QPoint(
-                               mapFromGlobal(QCursor::pos()).x()-8,
-                               mapFromGlobal(QCursor::pos()).y()-8)
-                           )== 0)
-        {/*scene()->addRect(//若无则添加
-                          mapFromGlobal(QCursor::pos()).x()-8,
-                          mapFromGlobal(QCursor::pos()).y()-8,
-                          16,16);*/
+        QGraphicsItem *pItemAt = scene()->itemAt(QPoint(//若当前光标处有item，则删除
+                                                        mapFromGlobal(QCursor::pos()).x()-8,
+                                                        mapFromGlobal(QCursor::pos()).y()-8));
+        static int i=1;
+
+        if(pItemAt== 0)//添加
+        {
             QGraphicsRectItem *rect = new QGraphicsRectItem (mapFromGlobal(QCursor::pos()).x()-8,
-                                   mapFromGlobal(QCursor::pos()).y()-8,
-                                   16,16);
+                                                             mapFromGlobal(QCursor::pos()).y()-8,
+                                                             16,16);
             QGraphicsSimpleTextItem *text = new QGraphicsSimpleTextItem(QString::number(i++));
             text->setPos(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
                                 mapFromGlobal(QCursor::pos()).y()-12));
 
-            PtGroup* ptGroup = new PtGroup;
-            ptGroup->rect = rect;
-            ptGroup->text = text;
-            ptGroup->addToGroup(rect);
-            ptGroup->addToGroup(text);
             scene()->addItem(rect);
             scene()->addItem(text);
+            QLinkedList<QGraphicsSimpleTextItem*>::iterator iter;
+            linkList.append(text);
+            for(iter=linkList.begin();iter!= linkList.end();iter++)
+                qDebug()<<(*iter)->text();
 
-            linkList.append(ptGroup);
-
-            //            qDebug("%d!!!",temp);
-            //           qDebug("point:%d,%d",mapFromGlobal(QCursor::pos()).x(),mapFromGlobal(QCursor::pos()).y());
         }
         /*
                     XItem *item = new XItem;
@@ -245,25 +235,25 @@ void PlView::keyPressEvent(QKeyEvent *event)
                     scene()->addItem(item);
         自定义item不能被itemAt识别？无法正常删除
         */
-        else {
-            /*scene()->removeItem(scene()->itemAt(QPoint(//若当前光标处有item，则删除
-                                                         mapFromGlobal(QCursor::pos()).x()-8,
-                                                         mapFromGlobal(QCursor::pos()).y()-8)));*/
-           scene()->destroyItemGroup(
-                       scene()->itemAt(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
-                                              mapFromGlobal(QCursor::pos()).y()-8))
-                       ->group());
+        else {//删除
+            scene()->removeItem(pItemAt);//两次删除，分别删除数字和方框
+            scene()->removeItem(scene()->itemAt(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
+                                                       mapFromGlobal(QCursor::pos()).y()-8)));
+            QLinkedList<QGraphicsSimpleTextItem*>::iterator it
+                    =qFind(linkList.begin(),linkList.end(),pItemAt);
+            if (it!=linkList.end())
+                linkList.erase(it);//
+            //在链表中删除选中点，此时it指向被删除点的下一个点
+            //此点及以后的点标号减一
+//            it++;
+              for(;it!=linkList.end();it++);
+//                  (*it)->setText(QString::number(
+//                                 (*it)->text().toInt()-1));
+
+
         }
     }break;
     }
-}
-
-
-PtGroup::PtGroup()
-{
-//    QGraphicsItem rect = new QGraphicsRectItem;
-//    QGraphicsItem text = new QGraphicsSimpleTextItem;
-//    addToGroup(rect);
-//    addToGroup(text);
 
 }
+
