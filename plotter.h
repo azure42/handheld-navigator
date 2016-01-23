@@ -9,15 +9,14 @@ class PlView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit PlView(QWidget *parent = 0);
+     explicit PlView(QWidget *parent = 0);
      QPointF coorCalc(QPoint nowPos,int viewWidth,int viewHeight);
      QCursor cursor;
-
      QGraphicsItem *zero;
-
      double cseCalc(QPoint nowPos, int viewWidth, int viewHeight);
 protected:
     void keyPressEvent(QKeyEvent *event);
+    QLinkedList <QGraphicsItemGroup*> linkList;
 signals:
 
 public slots:
@@ -52,12 +51,12 @@ private:
     QLabel *CSELabel;
     PlView *plView;
     QGraphicsScene *scene;
-    QString coordinateString;
+    QString coordinatextring;
     QString SPDString;
     QString CSEString;
     QGridLayout *mainLayout;
-    const int viewWidth=(QApplication::desktop()->width()-5*10)*5/6.0;
-    const int viewHeight=(QApplication::desktop()->height()-7*10)*6/7.0;
+    int viewWidth;
+    int viewHeight;
 protected:
   //  void mousePressEvent(QMouseEvent *event);
 
@@ -66,7 +65,15 @@ public slots:
 
 };
 
+class PtGroup : public  QObject,public QGraphicsItemGroup
+{
+    Q_OBJECT
+public:
+    PtGroup();
+    QGraphicsItem *rect;
+    QGraphicsItem *text;
 
+};
 
 
 

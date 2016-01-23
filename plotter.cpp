@@ -21,6 +21,8 @@ Plotter::Plotter(QWidget *parent) :
     connect(rTimer,SIGNAL(timeout()),this,SLOT(showTime()));
 
     QObject::connect(beidouData,SIGNAL(dataUpdate()),this,SLOT(showTime()));
+    viewWidth=(QApplication::desktop()->width()-5*10)*5/6.0;
+    viewHeight=(QApplication::desktop()->height()-7*10)*6/7.0;
 
     scene = new QGraphicsScene;
     scene->setSceneRect(0, 0, viewWidth, viewHeight);
@@ -65,11 +67,11 @@ Plotter::Plotter(QWidget *parent) :
     //创建一个直径8像素的圆形item代表当前位置
     QGraphicsItem *zero = new QGraphicsEllipseItem(
                 QRectF(viewWidth/2.0,viewHeight/2.0,8,8));
-//    plView->horizontalScrollBar()->setHidden(true);
-//    plView->verticalScrollBar()->setHidden(true);
+    //    plView->horizontalScrollBar()->setHidden(true);
+    //    plView->verticalScrollBar()->setHidden(true);
 
-//    QPoint *temp = new QPoint(plView->mapToGlobal(QPoint(viewWidth/2,viewHeight/2)).x(),
-//                              plView->mapToGlobal(QPoint(viewWidth/2,viewHeight/2)).y());
+    //    QPoint *temp = new QPoint(plView->mapToGlobal(QPoint(viewWidth/2,viewHeight/2)).x(),
+    //                              plView->mapToGlobal(QPoint(viewWidth/2,viewHeight/2)).y());
     plView->cursor.setPos(viewWidth/2+10*3+viewWidth/5+1,viewHeight/2+10*2+4);
     scene->addItem(zero);
     qDebug("%lf,%lf",zero->x(),zero->y());
@@ -88,20 +90,20 @@ void Plotter::showTime()
     SPDString.append("knot");
     SPDLabel->setText(SPDString);
 
-       const QPointF nowCoor =plView->coorCalc(cursor().pos(),viewWidth,viewHeight);
+    const QPointF nowCoor =plView->coorCalc(cursor().pos(),viewWidth,viewHeight);
 
-    coordinateString = "Longitude:";
-    coordinateString.append(QString::number(nowCoor.x()));
+    coordinatextring = "Longitude:";
+    coordinatextring.append(QString::number(nowCoor.x()));
     if(beidouData->E.toInt())//东南西北后缀判别
-        coordinateString.append(QString("E\nLatitude:"));
+        coordinatextring.append(QString("E\nLatitude:"));
     else
-        coordinateString.append(QString("W\nLatitude:"));
-    coordinateString.append(QString::number(nowCoor.y()));
+        coordinatextring.append(QString("W\nLatitude:"));
+    coordinatextring.append(QString::number(nowCoor.y()));
     if(beidouData->N.toInt())
-        coordinateString.append(QString("N"));
+        coordinatextring.append(QString("N"));
     else
-        coordinateString.append(QString("S"));
-    coordinateLabel->setText(coordinateString);
+        coordinatextring.append(QString("S"));
+    coordinateLabel->setText(coordinatextring);
 }
 
 /*****************
@@ -162,7 +164,7 @@ PlView::PlView(QWidget *parent) :
     QCursor cursor ;
     cursor = QCursor(Qt::CrossCursor);
     setCursor(cursor);
-//    cursor.setPos(QPoint(500,400));
+    //    cursor.setPos(QPoint(500,400));
 }
 
 /*****************
@@ -207,27 +209,61 @@ void PlView::keyPressEvent(QKeyEvent *event)
 
     case Qt::Key_Space ://管理途径点,以16x16的正方形表示
     {
+        static int i=0;
         if(scene()->itemAt(QPoint(
                                mapFromGlobal(QCursor::pos()).x()-8,
                                mapFromGlobal(QCursor::pos()).y()-8)
                            )== 0)
-        {scene()->addRect(//若无则添加
-                        mapFromGlobal(QCursor::pos()).x()-8,
-                        mapFromGlobal(QCursor::pos()).y()-8,
-                        16,16);
-            qDebug("point:%d,%d",mapFromGlobal(QCursor::pos()).x(),mapFromGlobal(QCursor::pos()).y());
+        {/*scene()->addRect(//若无则添加
+                          mapFromGlobal(QCursor::pos()).x()-8,
+                          mapFromGlobal(QCursor::pos()).y()-8,
+                          16,16);*/
+            QGraphicsRectItem *rect = new QGraphicsRectItem (mapFromGlobal(QCursor::pos()).x()-8,
+                                   mapFromGlobal(QCursor::pos()).y()-8,
+                                   16,16);
+            QGraphicsSimpleTextItem *text = new QGraphicsSimpleTextItem(QString::number(i++));
+            text->setPos(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
+                                mapFromGlobal(QCursor::pos()).y()-12));
+
+            PtGroup* ptGroup = new PtGroup;
+            ptGroup->rect = rect;
+            ptGroup->text = text;
+            ptGroup->addToGroup(rect);
+            ptGroup->addToGroup(text);
+            scene()->addItem(rect);
+            scene()->addItem(text);
+
+            linkList.append(ptGroup);
+
+            //            qDebug("%d!!!",temp);
+            //           qDebug("point:%d,%d",mapFromGlobal(QCursor::pos()).x(),mapFromGlobal(QCursor::pos()).y());
         }
-       /*
-        //            XItem *item = new XItem;
-        //            item->setPos(mapFromGlobal(QCursor::pos()).x()-10,
-        //                         mapFromGlobal(QCursor::pos()).y()-10);
-        //            scene()->addItem(item);
-        //自定义item不能被itemAt识别？无法正常删除
+        /*
+                    XItem *item = new XItem;
+                    item->setPos(mapFromGlobal(QCursor::pos()).x()-10,
+                                 mapFromGlobal(QCursor::pos()).y()-10);
+                    scene()->addItem(item);
+        自定义item不能被itemAt识别？无法正常删除
         */
-        else {scene()->removeItem(scene()->itemAt(QPoint(//若当前光标处有item，则删除
-                                                     mapFromGlobal(QCursor::pos()).x()-8,
-                                                     mapFromGlobal(QCursor::pos()).y()-8)));
+        else {
+            /*scene()->removeItem(scene()->itemAt(QPoint(//若当前光标处有item，则删除
+                                                         mapFromGlobal(QCursor::pos()).x()-8,
+                                                         mapFromGlobal(QCursor::pos()).y()-8)));*/
+           scene()->destroyItemGroup(
+                       scene()->itemAt(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
+                                              mapFromGlobal(QCursor::pos()).y()-8))
+                       ->group());
         }
     }break;
     }
+}
+
+
+PtGroup::PtGroup()
+{
+//    QGraphicsItem rect = new QGraphicsRectItem;
+//    QGraphicsItem text = new QGraphicsSimpleTextItem;
+//    addToGroup(rect);
+//    addToGroup(text);
+
 }
