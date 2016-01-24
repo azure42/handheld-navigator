@@ -35,7 +35,7 @@ void um220::readCom()
     }
 }
 
-double um220::getBrg(QPointF a)
+double um220::brgGet(QPointF a)
 {
     double temp,vx=a.x(),vy=a.y();
     if (vx>0 && vy==0)
@@ -58,5 +58,17 @@ double um220::getBrg(QPointF a)
         temp=180*(PI*3/2);
 
     return (temp-cog.toDouble());
+}
+
+/**
+ * @rngGet
+ *
+ * @param 目标点地理坐标
+ * @return 当前点与目标点的距离（海里）
+ */
+double um220::rngGet(QPointF targetCoor)
+{
+    return sqrt(pow((targetCoor.x()-Lon.toDouble()),2)-
+                pow((targetCoor.y()-Lat.toDouble()),2));
 }
 

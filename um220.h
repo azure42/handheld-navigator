@@ -36,8 +36,9 @@ public:
     QString mv;
     QString mvE;
     QString mode;
-    double getBrg(QPointF a);
+    double brgGet(QPointF a);
 
+    double rngGet(QPointF targetCoor);
 private :
     QTimer *rTimer;
 

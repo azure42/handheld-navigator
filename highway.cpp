@@ -63,6 +63,7 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
     };
     pWidth=(QApplication::desktop()->width()-5*10)*4/5;
     pHeight=QApplication::desktop()->height()-4*10;
+    //手动计算paintingWidget的尺寸
 
     setAutoFillBackground(true);
     QPalette palette;
@@ -81,14 +82,12 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
     if(pointList.isEmpty() == false)
     {
         painter.drawText(QPoint(0,0),QString::number(i));
-        if (pointList.isEmpty()==false)
-
-            brg = beidouData->getBrg(pointList.first()) ;
+        brg = beidouData->brgGet(pointList.first()) ;
     }
     else
     {
         brg = -45;
-        painter.drawText(QPoint(pWidth / 3,pHeight /8),QString("NO Point selected(-45°)"));
+        painter.drawText(QPoint(pWidth / 3,pHeight /8),QString("NO Point selected(-45°for example)"));
     }
     //    painter.drawLine(QPoint(pWidth / 2,pHeight /8),QPoint(pWidth,pHeight));
 
@@ -103,13 +102,8 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
     painter.translate(-1*brg/180*pWidth , 320);
     painter.setBrush(Qt::darkBlue);
     painter.drawConvexPolygon(arrow2, 3);  //填充时针的区域
-    qDebug()<<"painter";
 }
 
-//void paintingWidget::showTime()
-//{
-//    update();
-//}
 
 void Highway::showTime()
 {
@@ -133,7 +127,7 @@ void Highway::showTime()
 
     rngString = "RNG:";
     if (pointList.isEmpty()==false)
-        rngString.append(QString::number(beidouData->getBrg(pointList.first())));
+        rngString.append(QString::number(beidouData->rngGet(pointList.first())));
     rngString.append(" NM");
     rngLabel->setText(rngString);
 
