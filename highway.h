@@ -11,8 +11,8 @@ class hwPaintingWidget : public QWidget
 //    paintingWidget(QWidget *parent=0);
 protected:
     void paintEvent(QPaintEvent *event);
-//private:
-//    QTimer *timer;
+private:
+
 //private slots:
 //    void showTime();
 

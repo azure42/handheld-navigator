@@ -13,10 +13,10 @@ public:
     QPointF coorCalc(QPointF nowPos, int viewWidth, int viewHeight);
     QCursor cursor;
     QGraphicsItem *zero;
+    QLinkedList<QGraphicsSimpleTextItem*> itemList;
     int viewWidth,viewHeight;
 protected:
     void keyPressEvent(QKeyEvent *event);
-    QLinkedList <QGraphicsSimpleTextItem*> itemList;
     double cseCalc(QPoint nowPos, int viewWidth, int viewHeight);
 signals:
 

@@ -23,27 +23,29 @@ void readKey::run()
     int keyValue[KEYCOUNTS];
     int i;
     if( !initFlag )
-    {    fd = open("/dev/key",0);
-         initFlag = ~initFlag;
+    {
+        fd = open("/dev/key",0);
+        initFlag = ~initFlag;
     }
 
     read(fd,keyValue, sizeof(keyValue));
 
-    for(i=0;i<KEYCOUNTS;i++)
+    for(i=0; i<KEYCOUNTS; i++)
     {
-        if(keyValue[i] == 1)//1还是0代表按下来着？
+        if(keyValue[i] == 1)   //1还是0代表按下来着？
         {
-        switch(i)
-        {
-        case 1:
-        {
-           if(i==0)//切换键
+            switch(i)
             {
-                emit disSwitch(indexNum);
-                indexNum = (indexNum+1)%4;
+            case 1:
+            {
+                if(i==0)   //切换键
+                {
+                    emit disSwitch(indexNum);
+                    indexNum = (indexNum+1)%4;
 //                qDebug()<<QString("%1").arg(indexNum);
-            }         
-        }break;//一下在qt arm下可编译（据说）
+                }
+            }
+            break;//一下在qt arm下可编译（据说）
 //        case 2:
 //            QWSServer::sendKeyEvent(-1,Qt::Key_Up,Qt::NoModifier, true, false);break;
 //        case 3:
@@ -54,7 +56,8 @@ void readKey::run()
 //            QWSServer::sendKeyEvent(-1,Qt::Key_Right,Qt::NoModifier, true, false);break;
 //        case 6://确认键
 //            QWSServer::sendKeyEvent(-1,Qt::Key_Space,Qt::NoModifier, true, false);break;
+            }
         }
-    }}
+    }
     exec();
 }

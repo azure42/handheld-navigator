@@ -1,6 +1,7 @@
 #include "highway.h"
 extern class um220 *beidouData;
 extern QLinkedList <QPointF> pointList;
+int i=1;
 Highway::Highway(QWidget *parent) :
     QWidget(parent)
 {
@@ -46,7 +47,6 @@ Highway::Highway(QWidget *parent) :
 
 void hwPaintingWidget::paintEvent(QPaintEvent *event)
 {
-    static int i=0;
     setAutoFillBackground(true);
     QPalette palette;
     palette.setColor(QPalette::Background, Qt::white);
@@ -54,8 +54,9 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawLine(QPoint(20*i,20*i),QPoint(i+50,i+80));
-    i++;
+
+    if(pointList.isEmpty() == false)
+        painter.drawText(QPoint(0,0),QString::number(i));
 }
 
 //void paintingWidget::showTime()
@@ -66,10 +67,13 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
 void Highway::showTime()
 {
     if(pointList.isEmpty() == false
-     &&pointList.first().x()-beidouData->Lon.toDouble()<1.0
-     &&pointList.first().x()-beidouData->Lon.toDouble()<1.0)
-     //船在目标点方圆一海里以内，视为到达
+            &&pointList.first().x()-beidouData->Lon.toDouble()<1.0
+            &&pointList.first().x()-beidouData->Lon.toDouble()<1.0)
+        //船在目标点方圆一海里以内，视为到达
+    {
         pointList.removeFirst();
+        i++;
+    }
     cseString = "CSE:";
     cseString.append(beidouData->cog);
     cseString.append("°");
