@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
 //    QObject::connect(readKeyThread,SIGNAL(disSwitch(int)),
 //                     content->stack, SLOT(setCurrentIndex(int)));//切换界面
-    content->stack->setCurrentIndex(1);
+    content->stack->setCurrentIndex(2);
     list->hide();//隐藏list
     beidouData->um220init();
 //splitterMain->show();

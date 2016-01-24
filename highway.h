@@ -25,14 +25,17 @@ public:
     Highway(QWidget *parent=0);
 
 private:
+    QTimer *timer;
     QLabel *brgLabel;
     QLabel *rngLabel;
-    QLabel *SPDLabel;
-    QLabel *CSELabel;
-    QString CSEString;
+    QLabel *spdLabel;
+    QLabel *cseLabel;
+
+    QString cseString;
     QString brgString;
-    QString SPDString;
-    QTimer *timer;
+    QString rngString;
+    QString spdString;
+
     QGridLayout *mainLayout;
 protected:
 //    void paintEvent(QPaintEvent *event);

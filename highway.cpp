@@ -1,58 +1,61 @@
 #include "highway.h"
 extern class um220 *beidouData;
+extern QLinkedList <QPointF> pointList;
 Highway::Highway(QWidget *parent) :
     QWidget(parent)
 {
+    QCursor cursor ;
+    cursor = QCursor(Qt::BlankCursor);
+    setCursor(cursor);
+
     timer = new QTimer();
     QObject::connect(timer,SIGNAL(timeout()),this,SLOT(showTime()));
-    timer->start(1000);
+    timer->start(200);
 
     brgLabel =new QLabel(tr("BRG"));
     brgLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     brgLabel->setFrameShape (QFrame::Box);
 
-    CSELabel =new QLabel(tr("CSE"));
-    CSELabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    CSELabel->setFrameShape (QFrame::Box);
+    cseLabel =new QLabel(tr("CSE"));
+    cseLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    cseLabel->setFrameShape (QFrame::Box);
 
     rngLabel =new QLabel(tr("RNG"));
     rngLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     rngLabel->setFrameShape (QFrame::Box);
 
-    SPDLabel =new QLabel(tr("SPD"));
-    SPDLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    SPDLabel->setFrameShape (QFrame::Box);
+    spdLabel =new QLabel(tr("SPD"));
+    spdLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    spdLabel->setFrameShape (QFrame::Box);
 
-    //    hwPainting->setAutoFillBackground(true);
-    //    QPalette palette;
-    //    palette.setColor(QPalette::Background, QColor(192,253,123));
-    //    hwPainting->setPalette(palette);
+
     hwPainting = new hwPaintingWidget;
     hwPainting->show();
 
+
     mainLayout = new QGridLayout(this);
     mainLayout->addWidget(brgLabel,0,0);
-    mainLayout->addWidget(CSELabel,1,0);
-    mainLayout->addWidget(SPDLabel,2,0);
+    mainLayout->addWidget(cseLabel,1,0);
+    mainLayout->addWidget(spdLabel,2,0);
     mainLayout->addWidget(rngLabel,3,0);
     mainLayout->addWidget(hwPainting,0,1,4,4);
 
     //mainLayout->setSizeConstraint(QLayout::SetFixedSize);
 }
 
-//paintingWidget::paintingWidget(QWidget *parent) :
-//    QWidget(parent)
-//{
-//    timer = new QTimer();
-//    QObject::connect(timer,SIGNAL(timeout()),this,SLOT(showTime()));
-//    timer->start(1000);
-//}
 
 void hwPaintingWidget::paintEvent(QPaintEvent *event)
 {
+    static int i=0;
+    setAutoFillBackground(true);
+    QPalette palette;
+    palette.setColor(QPalette::Background, Qt::white);
+    setPalette(palette);
+
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawLine(QPoint(1000,1000),QPoint(0,0));
+    painter.drawLine(QPoint(20*i,20*i),QPoint(i+50,i+80));
+    i++;
 }
 
 //void paintingWidget::showTime()
@@ -62,20 +65,30 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
 
 void Highway::showTime()
 {
-    CSEString = "CSE:";
-    CSEString.append(beidouData->cog);
-    CSEString.append("°");
-    CSELabel->setText(CSEString);
+    if(pointList.isEmpty() == false
+     &&pointList.first().x()-beidouData->Lon.toDouble()<1.0
+     &&pointList.first().x()-beidouData->Lon.toDouble()<1.0)
+     //船在目标点方圆一海里以内，视为到达
+        pointList.removeFirst();
+    cseString = "CSE:";
+    cseString.append(beidouData->cog);
+    cseString.append("°");
+    cseLabel->setText(cseString);
 
     brgString = "BRG:";
     brgString.append(beidouData->cog);
     brgString.append("°");
-    brgLabel->setText(CSEString);
+    brgLabel->setText(cseString);
 
-    SPDString = "SPD:";
-    SPDString.append(beidouData->spd);
-    SPDString.append("knot");
-    SPDLabel->setText(SPDString);
+    rngString = "RNG:";
+    rngString.append(beidouData->cog);
+    rngString.append(" NM");
+    rngLabel->setText(cseString);
+
+    spdString = "SPD:";
+    spdString.append(beidouData->spd);
+    spdString.append("knot");
+    spdLabel->setText(spdString);
 
     update();
     hwPainting->update();

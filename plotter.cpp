@@ -5,7 +5,7 @@
 #define BEISHU 0.1//一像素代表多少海里
 
 extern class um220 *beidouData;
-extern class readKey *readKeyThread;
+QLinkedList <QPointF> pointList;
 
 /*****************
 *
@@ -21,12 +21,11 @@ Plotter::Plotter(QWidget *parent) :
     connect(rTimer,SIGNAL(timeout()),this,SLOT(showTime()));
 
     QObject::connect(beidouData,SIGNAL(dataUpdate()),this,SLOT(showTime()));
-    viewWidth=(QApplication::desktop()->width()-5*10)*5/6.0;
-    viewHeight=(QApplication::desktop()->height()-7*10)*6/7.0;
 
-    scene = new QGraphicsScene;
-    scene->setSceneRect(0, 0, viewWidth, viewHeight);
     plView =new PlView;
+    scene = new QGraphicsScene;
+    scene->setSceneRect(0, 0, plView->viewWidth, plView->viewHeight);
+
     plView->setScene(scene);
     plView->setRenderHint(QPainter::Antialiasing);//抗锯齿
     plView->centerOn(QPoint(0,0));
@@ -35,7 +34,7 @@ Plotter::Plotter(QWidget *parent) :
 
     //窗口静态布局初始化
     {
-        settingLabel =new QLabel(tr("SETTING"));
+        settingLabel =new QLabel(tr("Range:\nDEFAULT"));
         settingLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         settingLabel->setFrameShape (QFrame::Box);
 
@@ -66,13 +65,13 @@ Plotter::Plotter(QWidget *parent) :
 
     //创建一个直径8像素的圆形item代表当前位置
     QGraphicsItem *zero = new QGraphicsEllipseItem(
-                QRectF(viewWidth/2.0,viewHeight/2.0,8,8));
+                QRectF(plView->viewWidth/2.0,plView->viewHeight/2.0,8,8));
     //    plView->horizontalScrollBar()->setHidden(true);
     //    plView->verticalScrollBar()->setHidden(true);
 
     //    QPoint *temp = new QPoint(plView->mapToGlobal(QPoint(viewWidth/2,viewHeight/2)).x(),
     //                              plView->mapToGlobal(QPoint(viewWidth/2,viewHeight/2)).y());
-    plView->cursor.setPos(viewWidth/2+10*3+viewWidth/5+1,viewHeight/2+10*2+4);
+    plView->cursor.setPos(plView->viewWidth/2+10*3+plView->viewWidth/5+1,plView->viewHeight/2+10*2+4);
     scene->addItem(zero);
 
 }
@@ -89,14 +88,14 @@ void Plotter::showTime()
     SPDString.append("knot");
     SPDLabel->setText(SPDString);
 
-    const QPointF nowCoor =plView->coorCalc(cursor().pos(),viewWidth,viewHeight);
+    QPointF nowCoor =plView->coorCalc(cursor().pos(),plView->viewWidth,plView->viewHeight);
 
     coordinatextring = "Longitude:";
     coordinatextring.append(QString::number(nowCoor.x()));
     if(beidouData->E.toInt())//东南西北后缀判别
-        coordinatextring.append(QString("E\nLatitude:"));
+        coordinatextring.append(QString("E\t\t\t\tlongitude:"));
     else
-        coordinatextring.append(QString("W\nLatitude:"));
+        coordinatextring.append(QString("W\t\t\t\tLatitude:"));
     coordinatextring.append(QString::number(nowCoor.y()));
     if(beidouData->N.toInt())
         coordinatextring.append(QString("N"));
@@ -111,11 +110,11 @@ void Plotter::showTime()
 * 输出：经纬度
 *
 *****************/
-QPointF PlView::coorCalc(QPoint nowPos,int viewWidth,int viewHeight)
+QPointF PlView::coorCalc(QPointF nowPos,int viewWidth,int viewHeight)
 {
-    nowPos = mapFromGlobal(nowPos);
-    return QPointF(beidouData->Lon.toInt()+(nowPos.x()-viewWidth/2.0)*BEISHU,
-                   beidouData->Lat.toInt()+(nowPos.y()-viewHeight/2.0)*BEISHU
+    QPoint temp= mapFromGlobal(nowPos.toPoint());
+    return QPointF(beidouData->Lon.toInt()+(temp.x()-viewWidth/2.0)*BEISHU,
+                   beidouData->Lat.toInt()+(temp.y()-viewHeight/2.0)*BEISHU
                    );
 }
 
@@ -163,6 +162,8 @@ PlView::PlView(QWidget *parent) :
     QCursor cursor ;
     cursor = QCursor(Qt::CrossCursor);
     setCursor(cursor);
+    viewWidth=(QApplication::desktop()->width()-5*10)*5/6.0;
+    viewHeight=(QApplication::desktop()->height()-7*10)*6/7.0;
     //    cursor.setPos(QPoint(500,400));
 }
 
@@ -180,7 +181,7 @@ void PlView::keyPressEvent(QKeyEvent *event)
     {
 
     case Qt::Key_Equal ://缩放视野,坐标体系不变
-        scale(1.2, 1.2);
+        scale(1.2, 1.2);//按键不够用，考虑用激活右键惨淡实现
         break;
     case Qt::Key_Minus :
         scale(1 / 1.2, 1 / 1.2);
@@ -222,10 +223,12 @@ void PlView::keyPressEvent(QKeyEvent *event)
 
             scene()->addItem(rect);
             scene()->addItem(text);
-            QLinkedList<QGraphicsSimpleTextItem*>::iterator iter;
-            linkList.append(text);
-            for(iter=linkList.begin();iter!= linkList.end();iter++)
-                qDebug()<<(*iter)->text();
+            itemList.append(text);//存储item的指针，便于控制图形显示
+            pointList.append(text->pos());//存储目标点的屏幕坐标
+
+            // QLinkedList<QGraphicsSimpleTextItem*>::iterator iter;
+            // for(iter=itemList.begin();iter!= itemList.end();iter++)
+            //     qDebug()<<(*iter)->pos().x();
 
         }
         /*
@@ -235,25 +238,38 @@ void PlView::keyPressEvent(QKeyEvent *event)
                     scene()->addItem(item);
         自定义item不能被itemAt识别？无法正常删除
         */
-        else {//删除
+        else {
+            //删除，鼠标itemAt-》获取指针-》通过指针控制图形-》修改itemList
+            //                         ↓-》获取坐标-》修改pointList
             scene()->removeItem(pItemAt);//两次删除，分别删除数字和方框
             scene()->removeItem(scene()->itemAt(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
                                                        mapFromGlobal(QCursor::pos()).y()-8)));
             QLinkedList<QGraphicsSimpleTextItem*>::iterator it
-                    =qFind(linkList.begin(),linkList.end(),pItemAt);
-            if (it!=linkList.end())
-                linkList.erase(it);//
-            //在链表中删除选中点，此时it指向被删除点的下一个点
-            //此点及以后的点标号减一
-//            it++;
-              for(;it!=linkList.end();it++);
-//                  (*it)->setText(QString::number(
-//                                 (*it)->text().toInt()-1));
-
-
+                    =qFind(itemList.begin(),itemList.end(),pItemAt);
+            if(it!=itemList.end())
+                it = itemList.erase(it);
+            else itemList.removeLast();//在链表中删除选中点，此时it指向被删除点的下一个点
+            i--;
+            while (it != itemList.end())
+            {
+                //此点及以后的点标号减一
+                (*it)->setText(QString::number(
+                                   (*it)->text().toInt()-1));
+                it++;
+            }
         }
+        pointList.clear();//pointList与itemList同步
+        QLinkedList<QGraphicsSimpleTextItem*>::iterator it1;
+        QLinkedList<QPointF>::iterator it2;
+        for(it1=itemList.begin(),it2=pointList.begin();it1!=itemList.end();it1++,it2++)
+        {
+            (*it2) = coorCalc(mapToGlobal((*it1)->pos().toPoint()),viewWidth,viewHeight);
+//            qDebug()<<(*it2).x();
+        }
+
     }break;
     }
 
 }
+
 

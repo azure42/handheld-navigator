@@ -10,12 +10,13 @@ class PlView : public QGraphicsView
     Q_OBJECT
 public:
     explicit PlView(QWidget *parent = 0);
-    QPointF coorCalc(QPoint nowPos,int viewWidth,int viewHeight);
+    QPointF coorCalc(QPointF nowPos, int viewWidth, int viewHeight);
     QCursor cursor;
     QGraphicsItem *zero;
+    int viewWidth,viewHeight;
 protected:
     void keyPressEvent(QKeyEvent *event);
-    QLinkedList <QGraphicsSimpleTextItem*> linkList;
+    QLinkedList <QGraphicsSimpleTextItem*> itemList;
     double cseCalc(QPoint nowPos, int viewWidth, int viewHeight);
 signals:
 
@@ -44,6 +45,7 @@ class Plotter : public QWidget
     Q_OBJECT
 public:
     Plotter(QWidget *parent=0);
+
 private:
     QLabel *settingLabel;
     QLabel *coordinateLabel;
@@ -55,8 +57,7 @@ private:
     QString SPDString;
     QString CSEString;
     QGridLayout *mainLayout;
-    int viewWidth;
-    int viewHeight;
+
 protected:
     //  void mousePressEvent(QMouseEvent *event);
 
