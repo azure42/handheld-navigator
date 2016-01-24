@@ -1,4 +1,5 @@
 #include "highway.h"
+#include"math.h"
 extern class um220 *beidouData;
 extern QLinkedList <QPointF> pointList;
 int i=1;
@@ -45,18 +46,64 @@ Highway::Highway(QWidget *parent) :
 }
 
 
+
 void hwPaintingWidget::paintEvent(QPaintEvent *event)
 {
+    static const QPoint arrow[3] =
+    {
+        QPoint(20, 64),
+        QPoint(-20, 64),
+        QPoint(0, -200)
+    };
+    static const QPoint arrow2[3] =
+    {
+        QPoint(20, 64),
+        QPoint(-20, 64),
+        QPoint(0, -50)
+    };
+    pWidth=(QApplication::desktop()->width()-5*10)*4/5;
+    pHeight=QApplication::desktop()->height()-4*10;
+
     setAutoFillBackground(true);
     QPalette palette;
-    palette.setColor(QPalette::Background, Qt::white);
+    //    palette.setColor(QPalette::Background, Qt::white);
     setPalette(palette);
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    painter.drawLine(0,pHeight*7/8,pWidth,pHeight*7/8);
+    painter.drawLine(pWidth*2/9,0,0,pHeight*7/8);
+    painter.drawLine(pWidth*7/9,0,pWidth,pHeight*7/8);
+    painter.drawLine(pWidth/2,0,pWidth/2,pHeight*7/8);
+
+    double brg;
     if(pointList.isEmpty() == false)
+    {
         painter.drawText(QPoint(0,0),QString::number(i));
+        if (pointList.isEmpty()==false)
+
+            brg = beidouData->getBrg(pointList.first()) ;
+    }
+    else
+    {
+        brg = -45;
+        painter.drawText(QPoint(pWidth / 3,pHeight /8),QString("NO Point selected(-45°)"));
+    }
+    //    painter.drawLine(QPoint(pWidth / 2,pHeight /8),QPoint(pWidth,pHeight));
+
+    painter.translate(pWidth / 2, pHeight / 2);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(Qt::black);
+    painter.save();
+    painter.rotate(brg);
+    painter.drawConvexPolygon(arrow, 3);
+    painter.restore();
+
+    painter.translate(-1*brg/180*pWidth , 320);
+    painter.setBrush(Qt::darkBlue);
+    painter.drawConvexPolygon(arrow2, 3);  //填充时针的区域
+    qDebug()<<"painter";
 }
 
 //void paintingWidget::showTime()
@@ -82,12 +129,13 @@ void Highway::showTime()
     brgString = "BRG:";
     brgString.append(beidouData->cog);
     brgString.append("°");
-    brgLabel->setText(cseString);
+    brgLabel->setText(brgString);
 
     rngString = "RNG:";
-    rngString.append(beidouData->cog);
+    if (pointList.isEmpty()==false)
+        rngString.append(QString::number(beidouData->getBrg(pointList.first())));
     rngString.append(" NM");
-    rngLabel->setText(cseString);
+    rngLabel->setText(rngString);
 
     spdString = "SPD:";
     spdString.append(beidouData->spd);

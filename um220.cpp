@@ -1,5 +1,7 @@
 #include "stable.h"
 #include "um220.h"
+# define PI 3.1415926535897932
+#include<QPointF>
 
 void um220::um220init()
 {
@@ -31,5 +33,30 @@ void um220::readCom()
         spd = temp.mid(temp.indexOf("$GNRMC")+55,7);
         emit dataUpdate();
     }
+}
+
+double um220::getBrg(QPointF a)
+{
+    double temp,vx=a.x(),vy=a.y();
+    if (vx>0 && vy==0)
+        temp=0;
+    else if (vx>0 && vy>0)
+        temp=180*(atan(vy/vx));
+    else if (vx>0 && vy<0)
+        temp=180*(atan(vy/vx)+2*PI);
+    else if (vx<0 && vy==0)
+        temp=180*(PI);
+    else if (vx<0 && vy>0)
+        temp=180*(atan(vy/vx)+PI);
+    else if (vx<0 && vy>0)
+        temp=180*(atan(vy/vx)+PI);
+    //else if (vx==0 && vy==0)
+    //printf ("您输入的是同一个点");
+    else if (vx==0 && vy>0)
+        temp=180*(PI/2);
+    else
+        temp=180*(PI*3/2);
+
+    return (temp-cog.toDouble());
 }
 

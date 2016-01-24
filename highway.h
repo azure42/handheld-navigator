@@ -7,14 +7,16 @@
 class hwPaintingWidget : public QWidget
 {
     Q_OBJECT
-//public:
-//    paintingWidget(QWidget *parent=0);
+public:
+    double angelCalc(QPointF);
 protected:
+
     void paintEvent(QPaintEvent *event);
+    int pWidth,pHeight;
 private:
 
-//private slots:
-//    void showTime();
+    //private slots:
+    //    void showTime();
 
 };
 
@@ -38,7 +40,7 @@ private:
 
     QGridLayout *mainLayout;
 protected:
-//    void paintEvent(QPaintEvent *event);
+    //    void paintEvent(QPaintEvent *event);
     hwPaintingWidget *hwPainting;
 
 private slots:

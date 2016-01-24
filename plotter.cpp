@@ -89,6 +89,7 @@ void Plotter::showTime()
     SPDString.append("knot");
     SPDLabel->setText(SPDString);
 
+
     QPointF nowCoor =plView->coorCalc(cursor().pos(),plView->viewWidth,plView->viewHeight);
 
     coordinatextring = "Longitude:";

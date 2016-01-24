@@ -1,7 +1,11 @@
 #ifndef UM220_H
 #define UM220_H
 #include "posix_qextserialport.h"
+#include <QPointF>
 #include <QTimer>
+#include <QString>
+
+
 
 class um220 : public QThread
 {
@@ -9,7 +13,7 @@ class um220 : public QThread
 public:
     Posix_QextSerialPort *Com;
     void um220init();
-//    QTimer *rTimer;
+    //    QTimer *rTimer;
 
     QString all;
     QString time;
@@ -32,6 +36,8 @@ public:
     QString mv;
     QString mvE;
     QString mode;
+    double getBrg(QPointF a);
+
 private :
     QTimer *rTimer;
 

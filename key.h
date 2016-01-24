@@ -9,7 +9,7 @@ class readKey : public QThread
     Q_OBJECT
 public:
     explicit readKey(QObject *parent = 0);
-//    void keyInit();
+    //    void keyInit();
     volatile int indexNum;
 private:
     volatile bool initFlag;
