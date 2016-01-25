@@ -8,9 +8,11 @@ NavData::NavData(QWidget *parent) :
 {
     QObject::connect(beidouData,SIGNAL(dataUpdate()),this,SLOT(showTime()));
     //线程触发界面的刷新
-//    QDateTime timeTemp = QDateTime::currentDateTime();
-//    QString timeStr = timeTemp.toString("yyyy-MM-dd hh:mm:ss");
+    //    QDateTime timeTemp = QDateTime::currentDateTime();
+    //    QString timeStr = timeTemp.toString("yyyy-MM-dd hh:mm:ss");
     //通过系统时钟获取当前时间
+    QFont font;
+    font.setPointSize(45);
 
     timeLabel =new QLabel();
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -22,15 +24,18 @@ NavData::NavData(QWidget *parent) :
     //timeLabel->setStyleSheet("border: 7px solid  #000000");
 
     coordinateLabel =new QLabel;
+    coordinateLabel->setFont(font);
     coordinateLabel->setFrameShape (QFrame::Box);
     coordinateLabel->setAlignment( Qt::AlignHCenter|Qt::AlignVCenter);
     coordinateLabel->setText("GPS unconnected!");
 
     SPDLabel =new QLabel;
+    SPDLabel->setFont(font);
     SPDLabel->setFrameShape (QFrame::Box);
     SPDLabel->setAlignment( Qt::AlignHCenter|Qt::AlignVCenter);
 
     CSELabel =new QLabel;
+    CSELabel->setFont(font);
     CSELabel->setFrameShape (QFrame::Box);
     CSELabel->setAlignment( Qt::AlignHCenter|Qt::AlignVCenter);
 

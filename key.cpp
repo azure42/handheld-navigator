@@ -1,6 +1,3 @@
-//#include <stdio.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
 #include <fcntl.h>
 #include <key.h>
 #include <unistd.h>
@@ -16,7 +13,6 @@ readKey::readKey(QObject *parent) :
     initFlag = false;
     indexNum = 1;
 }
-
 
 void readKey::run()
 {
@@ -34,7 +30,7 @@ void readKey::run()
 
         for(i=0; i<KEYCOUNTS; i++)
         {
-            if(keyValue[i] == 1)   //1还是0代表按下来着？
+            if(keyValue[i] == 1)
             {
                 switch(i)
                 {

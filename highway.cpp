@@ -15,19 +15,27 @@ Highway::Highway(QWidget *parent) :
     QObject::connect(timer,SIGNAL(timeout()),this,SLOT(showTime()));
     timer->start(200);
 
+    QFont font;
+    font.setPointSize(45);
+
     brgLabel =new QLabel(tr("BRG"));
+    brgLabel->setFont(font);
     brgLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     brgLabel->setFrameShape (QFrame::Box);
 
     cseLabel =new QLabel(tr("CSE"));
+    cseLabel->setFont(font);
+
     cseLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     cseLabel->setFrameShape (QFrame::Box);
 
     rngLabel =new QLabel(tr("RNG"));
+    rngLabel->setFont(font);
     rngLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     rngLabel->setFrameShape (QFrame::Box);
 
     spdLabel =new QLabel(tr("SPD"));
+    spdLabel->setFont(font);
     spdLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     spdLabel->setFrameShape (QFrame::Box);
 
@@ -54,13 +62,13 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
     {
         QPoint(20, 64),
         QPoint(-20, 64),
-        QPoint(0, -200)
+        QPoint(0, -30)
     };
     static const QPoint arrow2[3] =
     {
-        QPoint(20, 64),
-        QPoint(-20, 64),
-        QPoint(0, -50)
+        QPoint(20, 30),
+        QPoint(-20, 30),
+        QPoint(0, -4)
     };
     pWidth=(QApplication::desktop()->width()-5*10)*4/5;
     pHeight=QApplication::desktop()->height()-4*10;
@@ -100,7 +108,7 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
     painter.drawConvexPolygon(arrow, 3);
     painter.restore();
 
-    painter.translate(-1*brg/180*pWidth , 320);
+    painter.translate(-1*brg/180*pWidth , 90);
     painter.setBrush(Qt::darkBlue);
     painter.drawConvexPolygon(arrow2, 3);  //填充时针的区域
 }

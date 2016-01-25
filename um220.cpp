@@ -46,12 +46,6 @@ void um220::readCom()
  * @return 目标点与正北方向夹角-当前点与正北方向夹角
  *          =当前点与目标点的夹角
  */
-/**
- * @brief
- *
- * @param a
- * @return double
- */
 double um220::brgGet(QPointF a)
 {
     double temp,vx=a.x(),vy=a.y();

@@ -17,10 +17,6 @@ Plotter::Plotter(QWidget *parent) :
     QWidget(parent)
 {
 
-    QTimer *rTimer = new QTimer(this);
-    rTimer->start(200);
-    connect(rTimer,SIGNAL(timeout()),this,SLOT(showTime()));
-
     QObject::connect(beidouData,SIGNAL(dataUpdate()),this,SLOT(showTime()));
 
     plView =new PlView;
@@ -38,19 +34,26 @@ Plotter::Plotter(QWidget *parent) :
 
     //窗口静态布局初始化
     {
+        QFont font;
+        font.setPointSize(45);
+
         settingLabel =new QLabel(tr("Range:\nDEFAULT"));
+        settingLabel->setFont(font);
         settingLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         settingLabel->setFrameShape (QFrame::Box);
 
         CSELabel =new QLabel(tr("CSE"));
+        CSELabel->setFont(font);
         CSELabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         CSELabel->setFrameShape (QFrame::Box);
 
         SPDLabel =new QLabel(tr("SPD"));
+        SPDLabel->setFont(font);
         SPDLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         SPDLabel->setFrameShape (QFrame::Panel);
 
         coordinateLabel =new QLabel(tr("longitude\t\tlatitude"));
+        coordinateLabel->setFont(font);
         coordinateLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         coordinateLabel->setFrameShape (QFrame::Box);
         mainLayout = new QGridLayout(this);
@@ -334,6 +337,9 @@ void PlView::dirGet(int i)
                     mapFromGlobal(QCursor::pos()).y()-8,
                     16,16);
             QGraphicsSimpleTextItem *text = new QGraphicsSimpleTextItem(QString::number(i++));
+            QFont font;
+            font.setPointSize(50);
+            text->setFont(font);
             text->setPos(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
                                 mapFromGlobal(QCursor::pos()).y()-12));
 

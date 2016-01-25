@@ -8,6 +8,11 @@ readKey *readKeyThread = new readKey;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    //设置字符编码为UTF-8，解决特殊符号乱码的问题
+    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+    QTextCodec::setCodecForTr(codec);
+    QTextCodec::setCodecForLocale(codec);
+    QTextCodec::setCodecForCStrings(codec);
     QFont font("CONSOLAS",18);
     a.setFont(font);
     QSplitter *splitterMain =new QSplitter(Qt::Horizontal,0);//主框架
@@ -22,12 +27,10 @@ int main(int argc, char *argv[])
     Content *content =new Content(splitterMain);
     readKeyThread->start();
 
-    content->stack->setCurrentIndex(0);//临时切换到plotter Display
-
     QObject::connect(readKeyThread,SIGNAL(disSwitch(int)),
                      content->stack, SLOT(setCurrentIndex(int)));//切换界面
-    content->stack->setCurrentIndex(2);
-    list->hide();//隐藏list
+    content->stack->setCurrentIndex(3);//0~3:NPHS
+    list->hide();//隐藏左侧列表
     beidouData->um220init();
 //splitterMain->show();
     splitterMain->showFullScreen();
