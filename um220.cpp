@@ -3,6 +3,7 @@
 # define PI 3.1415926535897932
 #include<QPointF>
 
+
 void um220::um220init()
 {
     Com = new Posix_QextSerialPort("/dev/ttySAC2",QextSerialBase::Polling);
@@ -17,6 +18,10 @@ void um220::um220init()
     rTimer->start(200);
     connect(rTimer,SIGNAL(timeout()),this,SLOT(readCom()));
 }
+/**
+ * @brief
+ *
+ */
 void um220::readCom()
 {
     QString temp = Com->readAll();
@@ -34,7 +39,19 @@ void um220::readCom()
         emit dataUpdate();
     }
 }
-
+/**
+ * @brgGet
+ *
+ * @param 目标点地理坐标
+ * @return 目标点与正北方向夹角-当前点与正北方向夹角
+ *          =当前点与目标点的夹角
+ */
+/**
+ * @brief
+ *
+ * @param a
+ * @return double
+ */
 double um220::brgGet(QPointF a)
 {
     double temp,vx=a.x(),vy=a.y();
