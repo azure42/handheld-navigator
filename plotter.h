@@ -16,12 +16,12 @@ public:
     QLinkedList<QGraphicsSimpleTextItem*> itemList;
     int viewWidth,viewHeight;
 protected:
-    void keyPressEvent(QKeyEvent *event);
+//    void keyPressEvent(QKeyEvent *event);
     double cseCalc(QPoint nowPos, int viewWidth, int viewHeight);
 signals:
 
 public slots:
-    //    void dirGet(int);
+        void dirGet(int i);
 };
 
 class XItem : public QGraphicsItem

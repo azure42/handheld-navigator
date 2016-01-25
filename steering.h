@@ -9,14 +9,23 @@ public:
     Steering(QWidget *parent=0);
 private:
     QLabel *paintingLabel;
-    QLabel *RNGLabel;
-    QLabel *TTGLabel;
-    QLabel *BRGLabel;
-    QLabel *ETALabel;
-    QLabel *SPDLabel;
-    QLabel *CSELabel;
+    QLabel *rngLabel;
+    QLabel *ttgLabel;
+    QLabel *brgLabel;
+    QLabel *etaLabel;
+    QLabel *spdLabel;
+    QLabel *cseLabel;
     QGridLayout *mainLayout;
 
+    QString rngString;
+    QString ttgString;
+    QString brgString;
+    QString etaString;
+    QString spdString;
+    QString cseString;
+
+private slots:
+    void showTime();
 
 };
 #endif

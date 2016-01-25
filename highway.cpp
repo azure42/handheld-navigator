@@ -1,5 +1,6 @@
 #include "highway.h"
 #include"math.h"
+#include"key.h"
 extern class um220 *beidouData;
 extern QLinkedList <QPointF> pointList;
 int i=1;

@@ -3,9 +3,9 @@
 #include "qcursor.h"
 #include "key.h"
 #define BEISHU 0.1//一像素代表多少海里
-
 extern class um220 *beidouData;
 QLinkedList <QPointF> pointList;
+extern readKey *readKeyThread;
 
 /*****************
 *
@@ -16,6 +16,7 @@ QLinkedList <QPointF> pointList;
 Plotter::Plotter(QWidget *parent) :
     QWidget(parent)
 {
+
     QTimer *rTimer = new QTimer(this);
     rTimer->start(200);
     connect(rTimer,SIGNAL(timeout()),this,SLOT(showTime()));
@@ -23,6 +24,9 @@ Plotter::Plotter(QWidget *parent) :
     QObject::connect(beidouData,SIGNAL(dataUpdate()),this,SLOT(showTime()));
 
     plView =new PlView;
+    QObject::connect(readKeyThread,SIGNAL(dirKey(int)),
+                     plView, SLOT(dirGet(int)));//切换界面
+
     scene = new QGraphicsScene;
     scene->setSceneRect(0, 0, plView->viewWidth, plView->viewHeight);
 
@@ -166,6 +170,7 @@ PlView::PlView(QWidget *parent) :
     setCursor(cursor);
     viewWidth=(QApplication::desktop()->width()-5*10)*5/6.0;
     viewHeight=(QApplication::desktop()->height()-7*10)*6/7.0;
+
     //    cursor.setPos(QPoint(500,400));
 }
 
@@ -177,6 +182,7 @@ PlView::PlView(QWidget *parent) :
 * 和增强可移植性
 *
 *****************/
+/*
 void PlView::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key())
@@ -211,7 +217,111 @@ void PlView::keyPressEvent(QKeyEvent *event)
         break;
 
 
-    case Qt::Key_Space :   //管理途径点,以16x16的正方形和数字表示
+    case Qt::Key_Space :   //管理途径点,以16x16的正方形和数字表示    {
+        QGraphicsItem *pItemAt = scene()->itemAt(QPoint(//若当前光标处有item，则删除
+                                     mapFromGlobal(QCursor::pos()).x()-8,
+                                     mapFromGlobal(QCursor::pos()).y()-8));
+        static int i=1;
+
+        if(pItemAt== 0)   //添加
+        {
+            QGraphicsRectItem *rect = new QGraphicsRectItem (mapFromGlobal(QCursor::pos()).x()-8,
+                    mapFromGlobal(QCursor::pos()).y()-8,
+                    16,16);
+            QGraphicsSimpleTextItem *text = new QGraphicsSimpleTextItem(QString::number(i++));
+            text->setPos(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
+                                mapFromGlobal(QCursor::pos()).y()-12));
+
+            scene()->addItem(rect);
+            scene()->addItem(text);
+            itemList.append(text);//存储item的指针，便于控制图形显示
+            pointList.append(text->pos());//存储目标点的屏幕坐标
+
+            // QLinkedList<QGraphicsSimpleTextItem*>::iterator iter;
+            // for(iter=itemList.begin();iter!= itemList.end();iter++)
+            //     qDebug()<<(*iter)->pos().x();
+
+        }
+
+//                    XItem *item = new XItem;
+//                    item->setPos(mapFromGlobal(QCursor::pos()).x()-10,
+//                                 mapFromGlobal(QCursor::pos()).y()-10);
+//                    scene()->addItem(item);
+//        自定义item不能被itemAt识别？无法正常删除
+
+        else
+        {
+            //删除，鼠标itemAt-》获取指针-》通过指针控制图形-》修改itemList
+            //                         ↓-》获取坐标-》修改pointList
+            scene()->removeItem(pItemAt);//两次删除，分别删除数字和方框
+            scene()->removeItem(scene()->itemAt(QPoint(mapFromGlobal(QCursor::pos()).x()-8,
+                                                mapFromGlobal(QCursor::pos()).y()-8)));
+            QLinkedList<QGraphicsSimpleTextItem*>::iterator it
+                =qFind(itemList.begin(),itemList.end(),pItemAt);
+            if(it!=itemList.end())
+                it = itemList.erase(it);
+            else itemList.removeLast();//在链表中删除选中点，此时it指向被删除点的下一个点
+            i--;
+            while (it != itemList.end())
+            {
+                //此点及以后的点标号减一
+                (*it)->setText(QString::number(
+                                   (*it)->text().toInt()-1));
+                it++;
+            }
+        }
+        pointList.clear();//pointList与itemList同步
+        QLinkedList<QGraphicsSimpleTextItem*>::iterator it1;
+        QLinkedList<QPointF>::iterator it2;
+        for(it1=itemList.begin(),it2=pointList.begin(); it1!=itemList.end(); it1++,it2++)
+        {
+            (*it2) = coorCalc(mapToGlobal((*it1)->pos().toPoint()),viewWidth,viewHeight);
+//            qDebug()<<(*it2).x();
+        }
+
+    }
+    break;
+    }
+
+}
+*/
+void PlView::dirGet(int i)
+{
+    switch(i)
+    {
+    case 1://上
+    {
+        if(cursor.pos().y()> PlView::pos().y() )//防止光标越界
+            cursor.setPos((QPoint(cursor.pos().x(),cursor.pos().y()-8)));
+    }
+    break;
+
+    case 2://下
+    {
+        if(cursor.pos().y() < (PlView::pos().y() + PlView::height()) )
+            cursor.setPos((QPoint(cursor.pos().x(),cursor.pos().y()+8)));
+    }
+    break;
+
+    case 3://左
+    {
+        if(cursor.pos().x() > PlView::pos().x() )
+        {
+            cursor.setPos((QPoint(cursor.pos().x()-8,cursor.pos().y())));
+        }
+    }
+    break;
+
+    case 4://右
+    {
+        if(cursor.pos().x() < (PlView::pos().x()+ PlView::width()))
+        {
+            cursor.setPos((QPoint(cursor.pos().x()+8,cursor.pos().y())));
+        }
+    }
+    break;
+
+    case 5://点管理
     {
         QGraphicsItem *pItemAt = scene()->itemAt(QPoint(//若当前光标处有item，则删除
                                      mapFromGlobal(QCursor::pos()).x()-8,
@@ -273,11 +383,9 @@ void PlView::keyPressEvent(QKeyEvent *event)
             (*it2) = coorCalc(mapToGlobal((*it1)->pos().toPoint()),viewWidth,viewHeight);
 //            qDebug()<<(*it2).x();
         }
-
     }
     break;
     }
-
 }
 
 

@@ -24,6 +24,7 @@ NavData::NavData(QWidget *parent) :
     coordinateLabel =new QLabel;
     coordinateLabel->setFrameShape (QFrame::Box);
     coordinateLabel->setAlignment( Qt::AlignHCenter|Qt::AlignVCenter);
+    coordinateLabel->setText("GPS unconnected!");
 
     SPDLabel =new QLabel;
     SPDLabel->setFrameShape (QFrame::Box);

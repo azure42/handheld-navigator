@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
 
     content->stack->setCurrentIndex(0);//临时切换到plotter Display
 
-//    QObject::connect(readKeyThread,SIGNAL(disSwitch(int)),
-//                     content->stack, SLOT(setCurrentIndex(int)));//切换界面
+    QObject::connect(readKeyThread,SIGNAL(disSwitch(int)),
+                     content->stack, SLOT(setCurrentIndex(int)));//切换界面
     content->stack->setCurrentIndex(2);
     list->hide();//隐藏list
     beidouData->um220init();
