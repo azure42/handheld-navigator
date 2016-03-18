@@ -16,7 +16,7 @@ public:
     QLinkedList<QGraphicsSimpleTextItem*> itemList;
     int viewWidth,viewHeight;
 protected:
-//    void keyPressEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event);
     double cseCalc(QPoint nowPos, int viewWidth, int viewHeight);
 signals:
 
@@ -56,6 +56,7 @@ private:
     QString coordinatextring;
     QString SPDString;
     QString CSEString;
+    QString settingString;
     QGridLayout *mainLayout;
 
 protected:

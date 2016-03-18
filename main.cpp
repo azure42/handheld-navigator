@@ -13,26 +13,30 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(codec);
     QTextCodec::setCodecForLocale(codec);
     QTextCodec::setCodecForCStrings(codec);
-    QFont font("CONSOLAS",18);
-    a.setFont(font);
-    QSplitter *splitterMain =new QSplitter(Qt::Horizontal,0);//主框架
+    //主框架
+    QSplitter *splitterMain =new QSplitter(Qt::Horizontal,0);
     splitterMain->setOpaqueResize(true);
-
-    QListWidget *list =new QListWidget(splitterMain);//添加左侧列表
+    //添加左侧列表
+    QListWidget *list =new QListWidget(splitterMain);
     list->insertItem(0,QObject::tr("Nav Data Display"));
     list->insertItem(1,QObject::tr("Plotter Display"));
     list->insertItem(2,QObject::tr("Highway Display"));
     list->insertItem(3,QObject::tr("Steering Display"));
-
     Content *content =new Content(splitterMain);
+    //页面切换功能
     readKeyThread->start();
-
     QObject::connect(readKeyThread,SIGNAL(disSwitch(int)),
-                     content->stack, SLOT(setCurrentIndex(int)));//切换界面
+                     content->stack, SLOT(setCurrentIndex(int)));
     content->stack->setCurrentIndex(3);//0~3:NPHS
     list->hide();//隐藏左侧列表
-    beidouData->um220init();
-//splitterMain->show();
+    
+    beidouData->um220init();//北斗模块初始化
+    //从资源文件中载入style sheet
+    QFile file(":/style.qss");
+    file.open(QFile::ReadOnly);
+    QString styleSheet = QLatin1String(file.readAll());
+    qApp->setStyleSheet(styleSheet);
+    //展示窗口
     splitterMain->showFullScreen();
     return a.exec();
 }

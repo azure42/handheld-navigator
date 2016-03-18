@@ -1,0 +1,26 @@
+ QLabel{
+/* color: black;*/
+/* background:black;*/
+ background:url(:/background.jpg);
+ border-style : outset;
+ border-width : 5px;
+ border-color : gray;
+ border-radius : 10px;
+ qproperty-alignment: 'AlignVCenter | AlignLeft';
+ qproperty-wordWrap: true;
+ }
+
+QStackedWidget
+{
+ color:transparent;
+background:url(:/background3-2.png);
+/*内层框架*/
+ }
+
+QSplitter
+{
+color:white;
+background:url(:/background3.png);
+/*外层框架*/
+}
+

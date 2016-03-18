@@ -4,7 +4,6 @@
 #include "stable.h"
 
 
-
 class NavData : public QWidget
 {
     Q_OBJECT

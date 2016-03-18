@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include<QDebug>
-#include <QWSServer>
+//#include <QWSServer>
 
 #define KEYCOUNTS 6
 
@@ -13,6 +13,19 @@ readKey::readKey(QObject *parent) :
     initFlag = false;
     indexNum = 1;
 }
+
+//void readKey::keyPressEvent(QKeyEvent *event)
+//{
+//    switch(event->key())
+//    {
+//        case Qt::Key_Enter:
+//        {
+//            qDebug()<<"!!";
+//        }break;
+
+//    }
+//}
+
 
 void readKey::run()
 {
@@ -25,9 +38,9 @@ void readKey::run()
             fd = open("/dev/key",0);
             initFlag = ~initFlag;
         }
-
+        
         read(fd,keyValue, sizeof(keyValue));
-
+        
         for(i=0; i<KEYCOUNTS; i++)
         {
             if(keyValue[i] == 1)
@@ -36,11 +49,11 @@ void readKey::run()
                 {
                 case 0:
                 {
-                        emit disSwitch(indexNum);
-                        indexNum = (indexNum+1)%4;
-
+                    emit disSwitch(indexNum);
+                    indexNum = (indexNum+1)%4;
+                    
                 }
-                break;
+                    break;
                 case 1:
                     emit dirKey(1);
                     break;

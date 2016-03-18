@@ -1,8 +1,8 @@
 #include "stable.h"
 #include "um220.h"
-# define PI 3.1415926535897932
+# define PI 3.14159
 #include<QPointF>
-
+#include"math.h"
 
 void um220::um220init()
 {
@@ -32,6 +32,7 @@ void um220::readCom()
         Lat =  temp.mid(18,11);
         N = temp.mid(30,1);
         Lon = temp.mid(32,12);
+        cog = temp.mid(55,7);
         E = temp.mid(45,1);
         FS = temp.mid(47,1);
         NoSV = temp.mid(49,1);
@@ -67,7 +68,7 @@ double um220::brgGet(QPointF a)
         temp=180*(PI/2);
     else
         temp=180*(PI*3/2);
-
+    
     return (temp-cog.toDouble());
 }
 
@@ -77,9 +78,23 @@ double um220::brgGet(QPointF a)
  * @param 目标点地理坐标
  * @return 当前点与目标点的距离（海里）
  */
+double um220::rad(double d)
+{
+    return d * PI / 180.0;
+}
 double um220::rngGet(QPointF targetCoor)
 {
-    return sqrt(pow((targetCoor.x()-Lon.toDouble()),2)-
-                pow((targetCoor.y()-Lat.toDouble()),2));
+    const double EARTH_RADIUS = 6378.137;
+    const double lat1=Lat.toDouble(),lng1=Lon.toDouble(),
+            lat2=targetCoor.y(),lng2=targetCoor.x();
+    
+    double radLat1 = rad(lat1);
+    double radLat2 = rad(lat2);
+    double a = radLat1 - radLat2;
+    double b = rad(lng1) - rad(lng2);
+    double s = 2 * asin(sqrt(pow(sin(a/2),2) +
+                             cos(rad(lat1))*cos(rad(lat2))*pow(sin(b/2),2)));
+    s = s * EARTH_RADIUS;
+    return s;
 }
 

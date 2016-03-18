@@ -11,6 +11,8 @@ public:
     explicit readKey(QObject *parent = 0);
     //    void keyInit();
     volatile int indexNum;
+protected:
+    void keyPressEvent(QKeyEvent *event);
 private:
     volatile bool initFlag;
     volatile int fd;

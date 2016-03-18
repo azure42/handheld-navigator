@@ -3,7 +3,8 @@ Content::Content(QWidget *parent):
     QFrame(parent)
 {
     stack =new QStackedWidget();
-    stack->setFrameStyle(QFrame::Panel|QFrame::Raised);//视觉风格
+//    stack->setFrameStyle(QFrame::Panel|QFrame::Raised);//视觉风格
+    stack->setFrameStyle(QFrame::Box|QFrame::Plain);
     navdata =new NavData();
     plotter =new Plotter();//栈内的三个页面
     highway =new Highway();
@@ -15,7 +16,6 @@ Content::Content(QWidget *parent):
     stack->addWidget(steering);
 
     QVBoxLayout *RightLayout =new QVBoxLayout(this);//右侧布局为一个整体，由页面和按钮构成，为竖直布局
-    //    RightLayout->setMargin(1);
-    //    RightLayout->setSpacing(1);
     RightLayout->addWidget(stack);
+
 }
