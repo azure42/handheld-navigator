@@ -1,6 +1,4 @@
-
-##handheld-navigator
-##手持导航仪
+##handheld-navigator手持导航仪
 
 本项目为一个基于qt4和嵌入式linux系统的简易北斗导航仪，功能界面模仿自Furuno GP30船载导航仪。为学习QtE和C++时做的demo。
 
