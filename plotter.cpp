@@ -38,7 +38,7 @@ Plotter::Plotter(QWidget *parent) :
         //        font.setPointSize(45);
         font.setPointSize(35);
         
-        settingLabel =new QLabel(tr("GPS\nEn"));
+        settingLabel =new QLabel(tr("MOD\n3D"));
         settingLabel->setFont(font);
         
         CSELabel =new QLabel(tr("CSE"));

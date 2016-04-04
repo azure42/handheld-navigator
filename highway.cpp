@@ -2,7 +2,6 @@
 #include"QFont"
 #include"math.h"
 #include"key.h"
-double brg = 0;
 extern class um220 *beidouData;
 extern QLinkedList <QPointF> pointList;
 int i=1;
@@ -18,7 +17,7 @@ Highway::Highway(QWidget *parent) :
     timer->start(200);
     
     QFont font;
-    font.setPointSize(20);
+    font.setPointSize(30);
     
     brgLabel =new QLabel(tr("BRG"));
     brgLabel->setFont(font);
@@ -45,7 +44,8 @@ Highway::Highway(QWidget *parent) :
 
 
 void hwPaintingWidget::paintEvent(QPaintEvent *event)
-{    
+{
+    
     pWidth=(QApplication::desktop()->width()-5*10)*4/5;
     pHeight=QApplication::desktop()->height()-4*10;
     //手动计算paintingWidget的尺寸
@@ -83,20 +83,20 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
         painter.drawLine(pWidth/8*i,pHeight*7/8,pWidth/8*i,pHeight*7/8-pHeight/20);
     }
     
-//    double brg;
-//    if(pointList.isEmpty() == false)
-//    {//若存在途径点，则显示下一目标编号
-//        QFont font;
-//        font.setPixelSize(35);
-//        painter.setFont(font);
-//        painter.drawText(QPoint(10,10),QString::number(i));
-////        brg = beidouData->brgGet(pointList.first()) ;
-//    }
-//    else
-//    {//否则显示演示角度
-//        brg = -45;
-        painter.drawText(QPoint(pWidth / 3,pHeight /8),QString("NO Point selected(-45°for example)"));
-//    }
+    double brg;
+    if(pointList.isEmpty() == false)
+    {//若存在途径点，则显示下一目标编号
+        QFont font;
+        font.setPixelSize(35);
+        painter.setFont(font);
+        painter.drawText(QPoint(10,10),QString::number(i));
+        brg = beidouData->brgGet(pointList.first()) ;
+    }
+    else
+    {//否则显示演示角度
+        brg = -45;
+//        painter.drawText(QPoint(pWidth / 3,pHeight /8),QString("NO Point selected(-45°for example)"));
+    }
     //    painter.drawLine(QPoint(pWidth / 2,pHeight /8),QPoint(pWidth,pHeight));
     
     //绘制航向标（蓝色）
@@ -119,10 +119,6 @@ void hwPaintingWidget::paintEvent(QPaintEvent *event)
 
 void Highway::showTime()
 {
-    if(brg!=180)
-        brg+=15;
-else brg = 0;
-
     if(pointList.isEmpty() == false
             &&pointList.first().x()-beidouData->Lon.toDouble()<1.0
             &&pointList.first().x()-beidouData->Lon.toDouble()<1.0)

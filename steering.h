@@ -14,7 +14,6 @@ protected:
 private:
     //private slots:
     //    void showTime();
-
 };
 
 

@@ -2,7 +2,6 @@
 #include "um220.h"
 extern class um220 *beidouData;
 extern QLinkedList <QPointF> pointList;
-double jiaodu=0;
 
 Steering::Steering(QWidget *parent) :
     QWidget(parent)
@@ -78,25 +77,31 @@ void stPaintingWidget::paintEvent(QPaintEvent *event)
     painter.drawRect(QRectF(QPointF(pWidth/10.0,pHeight/9.5),
                             QPointF(pWidth/10*9.0,pHeight/10*9.5)));
 
-    const double kedu = pWidth*0.8/12;//每个刻度的像素长度（每个刻度15°）
-//    const int cog0 = jiaodu/15*15;
-       const int cog0 = 144/15*15;
+    const double kedu = pWidth/9.6;//每个刻度的像素长度（每个刻度15°）
+    //    const int cog0 = beidouData->cog.toDouble()/15*15;
+    const int cog0 = beidouData->cog.toDouble()/15*15;
     //    const double pianyi0 = pWidth/2-kedu*15/cog0;//恰比course小的刻度线坐标
-    const double pianyi0 = pWidth/2-kedu*15/(cog0/jiaodu);//恰比course小的刻度线坐标
+//    const double pianyi0 = pWidth/2-kedu*15/(cog0/beidouData->cog.toDouble());//恰比course小的刻度线坐标
+    const double pianyi0 = pWidth/2-kedu/15*beidouData->cog.toDouble();//恰比course小的刻度线坐标
+
 
     QFont font;
-    font.setPixelSize(20);
+    font.setPixelSize(55);
     //绘制左半边刻度
     pen.setWidth(2);
     painter.setPen(pen);
+    painter.setFont(font);
     int i=0;
-    for(double tmp=pianyi0; tmp>pWidth/8.0; tmp-=kedu,i++)
+    for(double tmp=pianyi0; tmp>pWidth/10.0; tmp-=kedu,i++)
     {
+        if(tmp!=pWidth/2)
+        {
         painter.drawLine(tmp,pHeight/10*9.5,tmp,pHeight*0.95-pHeight/10);
         if((cog0-i*15)>0)
             painter.drawText(QPoint(tmp,pHeight/10*8),QString::number(cog0-i*15));
         else
             painter.drawText(QPoint(tmp,pHeight/10*8),QString::number(360+cog0-i*15));
+        }
     }
     //绘制右半边刻度
     for(double tmp=pianyi0,i=0; tmp<pWidth/10.0*9; tmp+=kedu,i--)
@@ -108,28 +113,21 @@ void stPaintingWidget::paintEvent(QPaintEvent *event)
         //            painter.drawText(QPoint(tmp,pHeight/10*8),QString::number(360+cog0-i*15));
     }
 
-
     font.setPixelSize(35);
     painter.setFont(font);
+
     painter.drawText(QPoint(pWidth/10.0,pHeight/2),QString("W"));
     painter.drawText(QPoint(pWidth/10.0*8.5,pHeight/2),QString("E"));
-
 
     //绘制代表船只位置的中心箭头
     painter.setPen(Qt::NoPen);
     painter.setBrush(Qt::darkRed);
     painter.translate(pWidth/2,pHeight/10*10.5);
     painter.drawConvexPolygon(arrow, 3);
-
-
 }
 
 void Steering::showTime()
 {
-
-    if(jiaodu<=180)
-        jiaodu+=30;
-else jiaodu = 0;
     rngString = "RNG:";
     if(pointList.isEmpty() == false)
         rngString.append(QString::number(
@@ -178,6 +176,7 @@ else jiaodu = 0;
     }
     else ttgString.append("NO POINT");
     etaLabel->setText(etaString);
+
 
     update();
     stPainting->update();

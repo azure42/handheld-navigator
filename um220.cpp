@@ -28,16 +28,30 @@ void um220::readCom()
     if(temp[0]=='$')
     {
         all = temp;
-        time = temp.mid(7,6);
+        /*time = temp.mid(7,6);
         Lat =  temp.mid(18,11);
         N = temp.mid(30,1);
         Lon = temp.mid(32,12);
         cog = temp.mid(55,7);
+
         E = temp.mid(45,1);
         FS = temp.mid(47,1);
         NoSV = temp.mid(49,1);
-        spd = temp.mid(temp.indexOf("$GNRMC")+55,7);
+        spd = temp.mid(temp.indexOf("$GNRMC")+55,7);*/
+        
+        time = QString("123456");
+        Lat =  QString("123.4");
+        N = QString("1");
+        Lon = QString("78.4");
+        E = QString("0");
+        
+        spd = QString("1");
+        cog = QString("60.0123");
+        //以上数据均需根据导航设备数据协议进行修改
         emit dataUpdate();
+        
+    
+        
     }
 }
 /**

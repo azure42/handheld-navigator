@@ -42,6 +42,7 @@ public:
 private :
     QTimer *rTimer;
 
+    double rad(double d);
 private slots:
     void readCom();
 signals:

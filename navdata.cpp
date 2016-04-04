@@ -21,7 +21,7 @@ NavData::NavData(QWidget *parent) :
     timeLabel =new QLabel();
     
     QFont timeFont;
-    timeFont.setPointSize(12);
+    timeFont.setPointSize(35);
     timeLabel->setLineWidth(3);
     timeLabel->setMidLineWidth(3);
     timeLabel->setFont(timeFont);
